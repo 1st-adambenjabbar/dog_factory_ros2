@@ -25,6 +25,8 @@
   <exec_depend>dog_factory_environment</exec_depend>
   <!-- Package qui compile les contrôleurs et perceptions. -->
   <exec_depend>dog_factory_control</exec_depend>
+  <!-- Package de carte et de navigation Nav2. -->
+  <exec_depend>dog_factory_navigation</exec_depend>
   <!-- Métadonnées ament. -->
   <export/>
 </package>

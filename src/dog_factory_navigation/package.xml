@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- Package Nav2 séparé de la description robot et du monde usine. -->
+<package format="3">
+  <!-- Nom du package de navigation. -->
+  <name>dog_factory_navigation</name>
+  <!-- Version de l'intégration Nav2. -->
+  <version>0.1.0</version>
+  <!-- Fonction du package. -->
+  <description>Nav2 navigation, map and local planning configuration for the factory dog.</description>
+  <!-- Mainteneur du projet. -->
+  <maintainer email="dev@example.com">Manus AI</maintainer>
+  <!-- Licence du code de configuration. -->
+  <license>Apache-2.0</license>
+  <!-- Outil de construction ament. -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Composants Nav2 et launch. -->
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_amcl</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <!-- Métadonnées du package. -->
+  <export/>
+</package>

@@ -344,3 +344,101 @@ Les tests utilisent des nuages de points synthétiques et reproduisent l’algor
 ## 24. Commentaires XML et déclaratifs
 
 Les nouveaux fichiers `dog_robot_description/package.xml`, `dog_factory_environment/package.xml`, les CMakeLists, le monde SDF et le launch contiennent désormais des commentaires explicatifs par section. Le cœur Xacro est conservé séparément afin de préserver une description robot fonctionnelle et réutilisable ; `dog_robot.urdf.xacro` documente son rôle d’interface.
+
+## 25. Navigation autonome avec Nav2
+
+Le package `dog_factory_navigation` sépare la navigation de la description du robot et du monde usine. Il contient une carte d’occupation PGM, son fichier YAML, les paramètres Nav2 et `launch/navigation.launch.py`.
+
+Nav2 utilise `/scan` pour AMCL et les costmaps, `/odom` pour le mouvement local, `map -> odom` pour la localisation et `/cmd_vel` pour commander le robot. Le planificateur global est NavFn et le contrôleur local est DWB.
+
+### Lancement local complet sur Ubuntu 22.04 avec ROS 2 Humble
+
+Installez les paquets nécessaires :
+
+```bash
+sudo apt update
+sudo apt install -y ros-humble-desktop ros-humble-gazebo-ros-pkgs \
+  ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-xacro \
+  ros-humble-rviz2 ros-humble-robot-state-publisher \
+  ros-humble-joint-state-publisher-gui ros-humble-ament-cmake-pytest
+```
+
+Préparez et compilez le workspace :
+
+```bash
+source /opt/ros/humble/setup.bash
+cd ~/dog_factory_ws
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Lancez Gazebo seul :
+
+```bash
+ros2 launch dog_factory_bringup factory_sim.launch.py gui:=true navigation:=false
+```
+
+Lancez l’environnement complet avec Nav2 :
+
+```bash
+ros2 launch dog_factory_bringup factory_sim.launch.py gui:=true navigation:=true
+```
+
+Le lancement complet démarre Gazebo, le monde industriel, le robot-chien, le lidar, la caméra, l’autonomie, la perception, AMCL, la carte, le planificateur global, le contrôleur local et Behavior Tree Navigator.
+
+### Visualisation Gazebo et RViz2
+
+Gazebo s’ouvre automatiquement grâce à `gui:=true`. Pour afficher Nav2 dans RViz2 :
+
+```bash
+rviz2
+```
+
+Dans RViz2, utilisez `map` comme **Fixed Frame**, puis ajoutez `Map` sur `/map`, `LaserScan` sur `/scan`, `TF`, `RobotModel`, `Map` ou `Costmap` sur les topics `/local_costmap/costmap` et `/global_costmap/costmap`, ainsi que `Path` sur `/plan` et `/local_plan`.
+
+Envoyez ensuite un objectif avec l’outil **2D Goal Pose**. En ligne de commande, l’action Nav2 peut être appelée ainsi :
+
+```bash
+ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
+  "{pose: {header: {frame_id: map}, pose: {position: {x: 5.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}"
+```
+
+Vérifiez le fonctionnement avec :
+
+```bash
+ros2 node list
+ros2 topic list | grep -E 'map|costmap|plan|cmd_vel|scan|odom'
+ros2 topic echo /amcl_pose
+ros2 topic echo /cmd_vel
+```
+
+### Remarque importante sur la dynamique quadrupède
+
+Nav2 suppose qu’un contrôleur bas niveau transforme `/cmd_vel` en déplacement. Le workspace actuel conserve une base pédagogique et le topic `/cmd_vel` doit être relié à une locomotion quadrupède réelle pour obtenir une navigation physique exacte. La carte fournie est un point de départ ; pour une navigation industrielle, créez une carte SLAM avec `slam_toolbox` puis remplacez `factory.yaml`.
+
+## 26. Hyperparamètres RL du saut
+
+Le fichier `src/dog_factory_control/config/rl_jump.yaml` propose une configuration PPO de départ. Il ne lance pas automatiquement un entraînement RL : il sert de contrat de configuration pour un environnement Gymnasium/RLlib/SB3 qui devra communiquer avec Gazebo ou une simulation vectorisée.
+
+| Groupe | Paramètres principaux | Conseil de réglage |
+|---|---|---|
+| Exploration | `initial_action_noise`, `final_action_noise` | Commencer haut puis réduire progressivement |
+| PPO | `learning_rate`, `clip_range`, `update_epochs` | Réduire le learning rate si les sauts deviennent instables |
+| Récompense | `reward_success`, `reward_failure`, `reward_energy_penalty` | La réussite doit dominer l’énergie, sans ignorer la stabilité |
+| Curriculum | `curriculum_obstacle_height`, `curriculum_max_obstacle_height` | Augmenter la hauteur seulement après un taux de réussite stable |
+| Dynamique | `target_clearance`, `target_forward_speed` | Mesurer la hauteur réelle et la vitesse après réception |
+| Reproductibilité | `seed`, `num_envs` | Fixer la seed pour comparer deux expériences |
+
+Une stratégie recommandée est de commencer avec des obstacles de 0.15 m, une pénalité de chute forte et une récompense de stabilité modérée. Lorsque le taux de réussite dépasse environ 80 % sur plusieurs milliers d’épisodes, augmentez progressivement la hauteur, la variation de masse, le bruit lidar et les perturbations de vitesse. N’augmentez pas simultanément toutes les difficultés, sinon il devient difficile d’identifier la cause d’une divergence.
+
+La fonction de récompense devrait combiner la réussite du franchissement, la hauteur au-dessus de l’obstacle, la stabilité du corps, la vitesse horizontale après réception, l’énergie des articulations et les collisions. Une récompense uniquement basée sur la hauteur peut produire des sauts excessifs ; une récompense uniquement basée sur la vitesse peut produire des collisions.
+
+Le pipeline RL conseillé est : entraînement hors ligne dans des épisodes courts, validation sur des obstacles jamais vus, randomisation de la masse et de la friction, puis transfert vers Gazebo avec bruit capteur et limites d’action. La machine à états Python reste le contrôleur déterministe de secours pendant l’expérimentation.
+
+## 27. Dépannage Nav2
+
+Si AMCL ne publie pas `map -> odom`, vérifiez que `/scan`, `/odom` et `/tf` existent, que `use_sim_time` est activé et que la carte est bien installée. Si le planificateur trouve un chemin mais que le robot ne bouge pas, inspectez `/cmd_vel` et le contrôleur bas niveau. Si la carte paraît inversée, vérifiez `origin`, `resolution`, `occupied_thresh` et `free_thresh` dans `factory.yaml`.
+
+Si Nav2 n’est pas trouvé, installez `ros-humble-navigation2` et `ros-humble-nav2-bringup`, puis sourcez de nouveau `/opt/ros/humble/setup.bash` et `install/setup.bash`.

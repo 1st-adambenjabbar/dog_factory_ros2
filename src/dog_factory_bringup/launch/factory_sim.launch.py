@@ -7,6 +7,9 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 # Importe la source utilisée pour charger un launch Python externe.
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
+# Importe la condition d'activation optionnelle de Nav2.
+from launch.conditions import IfCondition
+
 # Importe les substitutions évaluées au moment du lancement.
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 
@@ -39,6 +42,9 @@ def generate_launch_description():
     return LaunchDescription([
         # Permet de choisir si Gazebo doit ouvrir son interface graphique.
         DeclareLaunchArgument('gui', default_value='true'),
+
+        # Permet d'activer Nav2 depuis le lancement global.
+        DeclareLaunchArgument('navigation', default_value='false'),
 
         # Inclut le launch officiel gazebo_ros avec le monde usine sélectionné.
         IncludeLaunchDescription(
@@ -132,5 +138,17 @@ def generate_launch_description():
             package='dog_factory_control',
             executable='jump_controller_cpp',
             output='screen',
+        ),
+
+        # Démarre la localisation et la navigation Nav2 si navigation=true.
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('dog_factory_navigation'),
+                    'launch',
+                    'navigation.launch.py',
+                ])
+            ),
+            condition=IfCondition(LaunchConfiguration('navigation')),
         ),
     ])

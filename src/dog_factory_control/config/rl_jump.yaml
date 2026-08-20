@@ -1,0 +1,61 @@
+# Configuration pédagogique d'un futur agent RL de saut.
+# Le contrôleur actuellement exécutable reste la machine à états Python.
+rl_jump:
+  ros__parameters:
+    # Algorithme conseillé pour une politique continue : PPO.
+    algorithm: PPO
+    # Nombre d'environnements parallèles pendant l'entraînement.
+    num_envs: 16
+    # Nombre de pas collectés avant chaque mise à jour PPO.
+    rollout_steps: 2048
+    # Nombre d'époques d'optimisation par rollout.
+    update_epochs: 10
+    # Taille des mini-batches.
+    minibatch_size: 256
+    # Taux d'apprentissage initial de l'acteur et du critique.
+    learning_rate: 0.0003
+    # Facteur d'actualisation des récompenses futures.
+    gamma: 0.99
+    # Paramètre GAE pour réduire la variance de l'avantage.
+    gae_lambda: 0.95
+    # Coefficient de clipping PPO.
+    clip_range: 0.2
+    # Coefficient de la perte de valeur.
+    value_loss_coef: 0.5
+    # Bonus d'entropie favorisant l'exploration.
+    entropy_coef: 0.01
+    # Norme maximale des gradients.
+    max_grad_norm: 0.5
+    # Longueur maximale d'un épisode de saut.
+    episode_horizon: 160
+    # Limites d'action articulaires normalisées.
+    action_low: -1.0
+    action_high: 1.0
+    # Bruit initial d'exploration de la politique.
+    initial_action_noise: 0.20
+    # Décroissance progressive du bruit d'exploration.
+    final_action_noise: 0.03
+    # Fréquence de réduction du bruit en épisodes.
+    noise_decay_episodes: 20000
+    # Hauteur minimale souhaitée au-dessus de l'obstacle.
+    target_clearance: 0.20
+    # Vitesse horizontale minimale après réception.
+    target_forward_speed: 0.40
+    # Pénalité d'énergie articulaires.
+    reward_energy_penalty: 0.002
+    # Récompense de franchissement réussi.
+    reward_success: 10.0
+    # Pénalité de collision ou chute.
+    reward_failure: -10.0
+    # Récompense de maintien de stabilité en vol.
+    reward_stability: 1.0
+    # Pénalité de durée pour éviter les sauts trop lents.
+    reward_time_penalty: -0.01
+    # Niveau initial du curriculum de difficulté.
+    curriculum_level: 0
+    # Hauteur initiale des obstacles du curriculum.
+    curriculum_obstacle_height: 0.15
+    # Hauteur maximale visée en fin d'entraînement.
+    curriculum_max_obstacle_height: 0.60
+    # Graine reproductible des expériences.
+    seed: 42

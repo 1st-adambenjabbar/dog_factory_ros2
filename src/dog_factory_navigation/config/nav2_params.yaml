@@ -1,0 +1,178 @@
+# Paramètres communs de localisation et navigation du robot-chien.
+amcl:
+  ros__parameters:
+    # Frame globale publiée par AMCL.
+    global_frame_id: map
+    # Frame d'odométrie fournie par Gazebo.
+    odom_frame_id: odom
+    # Frame du châssis du robot.
+    base_frame_id: base_link
+    # Topic du lidar utilisé par AMCL.
+    scan_topic: /scan
+    # Modèle de mouvement différentiel approximatif.
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+    # Fréquence de mise à jour de la localisation.
+    update_min_d: 0.05
+    update_min_a: 0.05
+    # Nombre de particules pour la localisation Monte-Carlo.
+    min_particles: 300
+    max_particles: 2000
+    # Tolérance de convergence.
+    pf_err: 0.05
+    pf_z: 0.99
+    # Paramètres lidar utilisés par AMCL.
+    laser_max_range: 12.0
+    laser_min_range: 0.12
+    laser_model_type: likelihood_field
+    # Pose initiale approximative du robot dans la carte.
+    set_initial_pose: true
+    initial_pose:
+      x: -4.0
+      y: 0.0
+      yaw: 0.0
+
+map_server:
+  ros__parameters:
+    # Chemin remplacé par le launch avec la carte d'usine.
+    yaml_filename: factory.yaml
+
+planner_server:
+  ros__parameters:
+    # Fréquence de calcul du chemin global.
+    expected_planner_frequency: 5.0
+    # Plugin de planification NavFn robuste et standard.
+    planner_plugins: [GridBased]
+    GridBased:
+      plugin: nav2_navfn_planner/NavfnPlanner
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+
+controller_server:
+  ros__parameters:
+    # Fréquence du contrôleur local.
+    controller_frequency: 10.0
+    # Plugin de commande locale DWB.
+    controller_plugins: [FollowPath]
+    FollowPath:
+      plugin: dwb_core::DWBLocalPlanner
+      min_vel_x: 0.0
+      max_vel_x: 0.7
+      max_vel_theta: 1.2
+      acc_lim_x: 1.0
+      acc_lim_theta: 2.0
+      decel_lim_x: -1.0
+      decel_lim_theta: -2.0
+      vx_samples: 10
+      vtheta_samples: 20
+      sim_time: 1.5
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.05
+      critics: [RotateToGoal, ObstacleFootprint, PathAlign, GoalAlign, PathDist, GoalDist]
+      ObstacleFootprint.scale: 0.02
+      PathAlign.scale: 32.0
+      GoalAlign.scale: 24.0
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      # Frame fixe du coût local.
+      global_frame: odom
+      # Frame du robot.
+      robot_base_frame: base_link
+      # Mise à jour à 10 Hz.
+      update_frequency: 10.0
+      publish_frequency: 5.0
+      # Fenêtre locale autour du robot.
+      rolling_window: true
+      width: 8
+      height: 8
+      resolution: 0.1
+      # Empreinte approximative du châssis.
+      footprint: "[[0.45, 0.28], [0.45, -0.28], [-0.45, -0.28], [-0.45, 0.28]]"
+      plugins: [obstacle_layer, inflation_layer]
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        observation_sources: scan
+        scan:
+          topic: /scan
+          data_type: LaserScan
+          marking: true
+          clearing: true
+          obstacle_max_range: 12.0
+          raytrace_max_range: 12.0
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.55
+        cost_scaling_factor: 3.0
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      # Carte globale utilisée par NavFn.
+      global_frame: map
+      robot_base_frame: base_link
+      update_frequency: 2.0
+      publish_frequency: 1.0
+      track_unknown_space: true
+      resolution: 0.1
+      footprint: "[[0.45, 0.28], [0.45, -0.28], [-0.45, -0.28], [-0.45, 0.28]]"
+      plugins: [static_layer, obstacle_layer, inflation_layer]
+      static_layer:
+        plugin: nav2_costmap_2d::StaticLayer
+        map_subscribe_transient_local: true
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        observation_sources: scan
+        scan:
+          topic: /scan
+          data_type: LaserScan
+          marking: true
+          clearing: true
+          obstacle_max_range: 12.0
+          raytrace_max_range: 12.0
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.65
+        cost_scaling_factor: 3.0
+
+bt_navigator:
+  ros__parameters:
+    # Frames utilisés par l'arbre de comportement.
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    # Timeout raisonnable pour les actions de navigation.
+    default_server_timeout: 20
+
+behavior_server:
+  ros__parameters:
+    # Frame globale des comportements de récupération.
+    global_frame: odom
+    robot_base_frame: base_link
+    behavior_plugins: [spin, backup, wait]
+    spin:
+      plugin: nav2_behaviors/Spin
+    backup:
+      plugin: nav2_behaviors/BackUp
+    wait:
+      plugin: nav2_behaviors/Wait
+
+waypoint_follower:
+  ros__parameters:
+    loop_rate: 20
+    stop_on_failure: false
+
+lifecycle_manager_localization:
+  ros__parameters:
+    # Démarre automatiquement AMCL et map_server.
+    autostart: true
+    node_names: [map_server, amcl]
+
+lifecycle_manager_navigation:
+  ros__parameters:
+    # Démarre automatiquement les serveurs Nav2.
+    autostart: true
+    node_names: [controller_server, planner_server, behavior_server, bt_navigator, waypoint_follower]

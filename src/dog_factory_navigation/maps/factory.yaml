@@ -1,0 +1,12 @@
+# Carte d'occupation utilisée par Nav2 et AMCL.
+image: factory.pgm
+# Résolution en mètres par cellule.
+resolution: 1.0
+# Origine de la carte dans le frame map : x, y, yaw.
+origin: [-10.0, -6.0, 0.0]
+# Valeur considérée comme occupée.
+occupied_thresh: 0.65
+# Valeur considérée comme libre.
+free_thresh: 0.25
+# Interprétation standard des pixels PGM.
+negate: 0
