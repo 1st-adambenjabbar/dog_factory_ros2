@@ -480,3 +480,9 @@ ros2 run dog_factory_control evaluate_jump_policy \
 Le script produit `results/jump_policy_eval.csv` pour l’analyse tabulaire et `results/jump_policy_eval.json` pour l’archivage du résumé. Une campagne typique doit être répétée avec plusieurs seeds et plusieurs hauteurs d’obstacle. Le résultat principal est le `success_rate`, mais une politique acceptable doit aussi limiter l’énergie, les chutes et l’erreur latérale.
 
 Le script évalue la machine à états ou toute politique qui répond au service `/dog/jump_python`. Pour évaluer une véritable politique RL, remplacez l’appel de service par une publication d’action issue de votre modèle PPO et conservez les mêmes métriques d’épisode.
+
+## 24. Guides mathématiques et présentation
+
+Pour reconstruire le système de zéro, lire `REBUILD_GUIDE_DOG_ROBOT.md`, puis `MATH_SENSOR_NAV2_GUIDE.md` pour les équations de perception, les signaux ROS 2 et la procédure de test Nav2/Gazebo. La présentation récapitulative des deux workspaces est livrée séparément sous forme de slides.
+
+Références officielles : [ROS 2 Humble](https://docs.ros.org/en/humble/) · [MoveIt 2](https://moveit.picknik.ai/humble/doc/concepts/kinematics.html) · [Nav2](https://docs.nav2.org/getting_started/index.html).
