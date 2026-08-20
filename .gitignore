@@ -1,0 +1,17 @@
+# Artefacts de compilation ROS 2
+build/
+install/
+log/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+
+# Fichiers temporaires et éditeurs
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Archives générées localement
+*.tar.gz

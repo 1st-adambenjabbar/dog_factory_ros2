@@ -1,0 +1,5 @@
+factory_dog_autonomy:
+  ros__parameters:
+    cruise_speed: 0.65
+    safe_distance: 1.0
+    jump_height: 0.55

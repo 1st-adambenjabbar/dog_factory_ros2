@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    cruise_speed: 0.65
+    safe_distance: 1.0
+    jump_height: 0.55
+    obstacle_timeout: 2.0
