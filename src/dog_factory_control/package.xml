@@ -1,1 +1,41 @@
-<?xml version="1.0"?><package format="3"><name>dog_factory_control</name><version>0.1.0</version><description>Python and C++ dog autonomy controllers.</description><maintainer email="dev@example.com">Manus AI</maintainer><license>Apache-2.0</license><buildtool_depend>ament_cmake</buildtool_depend><buildtool_depend>ament_python</buildtool_depend><depend>rclcpp</depend><depend>rclpy</depend><depend>sensor_msgs</depend><depend>geometry_msgs</depend><depend>trajectory_msgs</depend><depend>std_srvs</depend><depend>builtin_interfaces</depend><export><build_type>ament_cmake</build_type></export></package>
+<?xml version="1.0"?>
+<!-- Déclare le package ROS 2 de contrôle et de perception du robot-chien. -->
+<package format="3">
+  <!-- Nom utilisé par colcon et ros2 run. -->
+  <name>dog_factory_control</name>
+  <!-- Version actuelle du package pédagogique. -->
+  <version>0.2.0</version>
+  <!-- Résumé des contrôleurs et du détecteur LiDAR. -->
+  <description>Python and C++ dog autonomy controllers plus real-time LiDAR obstacle perception.</description>
+  <!-- Mainteneur de référence du workspace. -->
+  <maintainer email="dev@example.com">Manus AI</maintainer>
+  <!-- Licence du code fourni dans le workspace. -->
+  <license>Apache-2.0</license>
+  <!-- Outil de construction CMake. -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Outil utilisé par la partie Python du package. -->
+  <buildtool_depend>ament_python</buildtool_depend>
+  <!-- API ROS 2 C++. -->
+  <depend>rclcpp</depend>
+  <!-- API ROS 2 Python. -->
+  <depend>rclpy</depend>
+  <!-- Message LaserScan reçu du lidar. -->
+  <depend>sensor_msgs</depend>
+  <!-- PoseArray publié pour les centres d'obstacles. -->
+  <depend>geometry_msgs</depend>
+  <!-- Trajectoires utilisées par le saut. -->
+  <depend>trajectory_msgs</depend>
+  <!-- Service Trigger du saut et de l'autonomie. -->
+  <depend>std_srvs</depend>
+  <!-- Message Float32 publié pour la distance frontale. -->
+  <depend>std_msgs</depend>
+  <!-- Messages de marqueurs affichés dans RViz2. -->
+  <depend>visualization_msgs</depend>
+  <!-- Types temporels utilisés par les messages ROS 2. -->
+  <depend>builtin_interfaces</depend>
+  <!-- Indique à colcon d'utiliser la construction CMake. -->
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
+

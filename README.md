@@ -234,3 +234,64 @@ Pour passer d’un démonstrateur à une simulation quadrupède plus réaliste, 
 [3]: https://docs.ros.org/en/humble/Tutorials/Intermediate/URDF/URDF-Main.html ROS 2 URDF Tutorials
 [4]: https://docs.ros.org/en/humble/p/sensor_msgs/msg/LaserScan.html `sensor_msgs/msg/LaserScan`
 [5]: https://docs.ros.org/en/humble/p/launch/ ROS 2 Launch Documentation
+
+## 19. Nœud C++ de perception LiDAR
+
+Le nœud `lidar_obstacle_detector` réalise une perception temps réel directement à partir du topic `/scan`. Il ne s’agit pas d’une caméra : dans ce contexte, la vision par ordinateur demandée est interprétée comme une perception géométrique du milieu à partir du LiDAR 2D.
+
+Le nœud applique quatre étapes. Il filtre les valeurs invalides, convertit chaque rayon polaire en coordonnées cartésiennes, regroupe les points voisins en clusters et calcule le centre moyen de chaque cluster. Les clusters contenant moins de `min_cluster_points` mesures sont rejetés afin de réduire les faux obstacles issus du bruit.
+
+### Compilation et lancement
+
+Le nœud est automatiquement compilé par `dog_factory_control` et démarré par :
+
+```bash
+ros2 launch dog_factory_bringup factory_sim.launch.py
+```
+
+Pour le lancer séparément après compilation :
+
+```bash
+ros2 run dog_factory_control lidar_obstacle_detector
+```
+
+### Topics publiés
+
+| Topic | Type | Utilisation |
+|---|---|---|
+| `/lidar/obstacles` | `geometry_msgs/msg/PoseArray` | Centres des obstacles détectés |
+| `/lidar/front_obstacle_distance` | `std_msgs/msg/Float32` | Distance minimale dans le cône frontal |
+| `/lidar/obstacle_markers` | `visualization_msgs/msg/MarkerArray` | Cylindres visualisables dans RViz2 |
+
+### Paramètres du détecteur
+
+| Paramètre | Valeur | Rôle |
+|---|---:|---|
+| `min_range` | `0.12` | Distance minimale conservée |
+| `max_range` | `12.0` | Distance maximale conservée |
+| `cluster_distance` | `0.35` | Écart maximal entre deux points d’un même obstacle |
+| `min_cluster_points` | `3` | Nombre minimal de points par obstacle |
+| `front_danger_distance` | `1.0` | Seuil de diagnostic frontal |
+
+Les paramètres peuvent être inspectés avec :
+
+```bash
+ros2 param list /lidar_obstacle_detector
+ros2 param get /lidar_obstacle_detector cluster_distance
+ros2 param set /lidar_obstacle_detector cluster_distance 0.50
+```
+
+### Visualisation dans RViz2
+
+Lancez `rviz2`, choisissez `base_link` ou `lidar_link` comme frame fixe, puis ajoutez un affichage **MarkerArray** sur `/lidar/obstacle_markers`. Les obstacles apparaissent comme des cylindres rouges centrés sur les clusters détectés. Vous pouvez aussi ajouter **PoseArray** sur `/lidar/obstacles` pour observer directement les centres géométriques.
+
+### Vérification en ligne de commande
+
+```bash
+ros2 topic echo /lidar/obstacles
+ros2 topic echo /lidar/front_obstacle_distance
+ros2 topic echo /lidar/obstacle_markers
+ros2 topic hz /lidar/obstacles
+```
+
+Le nœud est volontairement sans OpenCV, car les données d’entrée sont des distances angulaires et non des images. Pour une version plus avancée, il serait possible d’ajouter une caméra RGB, OpenCV et une fusion caméra-LiDAR ; le détecteur actuel constitue la branche de perception géométrique robuste et légère pour l’évitement.

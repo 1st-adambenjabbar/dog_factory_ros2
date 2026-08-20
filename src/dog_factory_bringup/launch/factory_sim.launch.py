@@ -89,6 +89,20 @@ def generate_launch_description():
             output='screen',
         ),
 
+        # Démarre le détecteur C++ qui consomme /scan et publie les obstacles.
+        Node(
+            package='dog_factory_control',
+            executable='lidar_obstacle_detector',
+            parameters=[{
+                'min_range': 0.12,
+                'max_range': 12.0,
+                'cluster_distance': 0.35,
+                'min_cluster_points': 3,
+                'front_danger_distance': 1.0,
+            }],
+            output='screen',
+        ),
+
         # Démarre le nœud C++ qui fournit le service /dog/jump.
         Node(
             package='dog_factory_control',
