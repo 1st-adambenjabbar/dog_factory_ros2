@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Configuration RL</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:1px solid #1A1A1A;padding-top:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:96px 432px 136px}
+.header{grid-column:1/7;border-bottom:2px solid #1A1A1A;padding:24px 34px;display:flex;align-items:center;justify-content:space-between}.header h1{font:900 42px Arial Narrow,Arial,sans-serif;margin:0}.header span{color:#FF5A1F;font-weight:bold;letter-spacing:2px}
+.left{grid-column:1/4;border-right:2px solid #1A1A1A;padding:16px 18px 0 24px}.right{grid-column:4/7;padding:16px 24px 0 18px}.section-title{font:900 24px Arial Narrow,Arial,sans-serif;color:#FF5A1F;margin:0 0 12px}.intro{font-size:16px;line-height:1.45;color:#2D3748;margin:0 0 14px}.matrix{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #1A1A1A}.row{min-height:52px;border-bottom:2px solid #1A1A1A;padding:6px 10px 0 0}.row:nth-child(even){border-left:2px solid #1A1A1A;padding-left:12px}.key{display:block;color:#FF5A1F;font-weight:bold;font-size:16px}.value{font-size:15px;color:#2D3748;line-height:1.35}.schedule{height:120px;border-top:2px solid #1A1A1A;border-bottom:2px solid #1A1A1A;display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:12px}.stage{padding:8px 10px 0;border-right:2px solid #1A1A1A;position:relative}.stage:last-child{border-right:0}.stage h3{font:900 20px Arial Narrow,Arial,sans-serif;margin:0 0 10px;color:#1A1A1A}.stage strong{color:#FF5A1F;font-size:20px}.stage p{font-size:14px;line-height:1.4;color:#2D3748;margin:6px 0 0}.arrow{position:absolute;right:-8px;top:54px;background:#FF5A1F;font-weight:bold;font-size:18px;padding:0 2px}.reward{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #1A1A1A;margin-top:12px}.reward-item{min-height:56px;padding:8px 12px 0 0;border-bottom:2px solid #1A1A1A}.reward-item:nth-child(even){border-left:2px solid #1A1A1A;padding-left:12px}.reward-item strong{display:block;color:#FF5A1F;font-size:16px}.reward-item span{font-size:15px;line-height:1.35;color:#2D3748}.footer{grid-column:1/7;border-top:2px solid #1A1A1A;background:#1A1A1A;color:#E8ECEF;padding:12px 24px 0;display:grid;grid-template-columns:2fr 1fr;gap:20px;font-size:16px;line-height:1.5}.footer strong{color:#FF5A1F}.yaml{font-size:15px;color:#E8ECEF;border:2px solid #FF5A1F;padding:8px 12px;background:#2D3748}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Configuration RL</h1><span>08 / PPO · CURRICULUM · REWARD</span></div>
+<div class="left">
+<h2 class="section-title">PPO / EXPLORATION</h2>
+<p class="intro">Point de départ pour une politique continue de saut. Les valeurs doivent être comparées sur plusieurs seeds et plusieurs hauteurs.</p>
+<div class="matrix">
+<div class="row"><span class="key">algorithm</span><span class="value">PPO</span></div><div class="row"><span class="key">num_envs</span><span class="value">16 environnements</span></div>
+<div class="row"><span class="key">learning_rate</span><span class="value">0.0003</span></div><div class="row"><span class="key">gamma</span><span class="value">0.99</span></div>
+<div class="row"><span class="key">gae_lambda</span><span class="value">0.95</span></div><div class="row"><span class="key">clip_range</span><span class="value">0.20</span></div>
+<div class="row"><span class="key">rollout_steps</span><span class="value">2048</span></div><div class="row"><span class="key">minibatch_size</span><span class="value">256</span></div>
+</div>
+<h2 class="section-title" style="margin-top:16px">BRUIT D’ACTION</h2>
+<p class="intro">Exploration initiale : <b style="color:#FF5A1F">0.20</b> → finale : <b style="color:#FF5A1F">0.03</b> sur 20 000 épisodes.</p>
+</div>
+<div class="right">
+<h2 class="section-title">CURRICULUM DE DIFFICULTÉ</h2>
+<p class="intro">Ne modifier qu’une difficulté à la fois : hauteur, friction, masse, bruit capteur ou perturbation latérale.</p>
+<div class="schedule"><div class="stage"><h3>NIVEAU 0</h3><strong>0.15 m</strong><p>Obstacle bas<br>Scène stable<br>Apprendre l’impulsion</p><span class="arrow">→</span></div><div class="stage"><h3>NIVEAU 1</h3><strong>0.35 m</strong><p>Variations de friction<br>Bruit LiDAR<br>Réception contrôlée</p><span class="arrow">→</span></div><div class="stage"><h3>NIVEAU 2</h3><strong>0.60 m</strong><p>Obstacle inédit<br>Perturbation latérale<br>Validation générale</p></div></div>
+<h2 class="section-title" style="margin-top:16px">REWARD SHAPING</h2>
+<div class="reward"><div class="reward-item"><strong>+10.0 réussite</strong><span>Franchissement et réception sans chute.</span></div><div class="reward-item"><strong>−10.0 échec</strong><span>Collision, chute ou trajectoire invalide.</span></div><div class="reward-item"><strong>+1.0 stabilité</strong><span>Corps stable pendant le vol et l’atterrissage.</span></div><div class="reward-item"><strong>−0.002 énergie</strong><span>Limiter les actions articulaires excessives.</span></div></div>
+</div>
+<div class="footer"><div><strong>PRINCIPE</strong><br>La réussite doit dominer la récompense, tandis que stabilité et énergie empêchent les sauts dangereux ou inutilement violents.</div><div class="yaml">src/dog_factory_control/config/rl_jump.yaml<br>→ configuration versionnée<br>→ validation dans Gazebo</div></div>
+</div>
+</body>
+</html>

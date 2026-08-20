@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "title": "Deux robots, deux terrains d’opération",
+    "created": 1787254894.416,
+    "last_updated": 1787255601.567,
+    "total_slides": 10
+  },
+  "slides": [
+    {
+      "id": "overview",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "rebuild",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "agri_mechanics",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "agri_vision",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "agri_math",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "fire_mechanics",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "track_math",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "mission_safety",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "validation",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "roadmap",
+      "state": "edited",
+      "pageNum": 10
+    }
+  ],
+  "outline": [
+    {
+      "id": "overview",
+      "title": "Deux robots, deux terrains d’opération",
+      "summary": "Vue d’ensemble des workspaces agri_rover_ws et fire_tank_ws, de leurs objectifs, packages et limites pédagogiques.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "rebuild",
+      "title": "Méthode de reconstruction de zéro",
+      "summary": "Ordre recommandé : modèle physique, capteurs, simulation, perception, navigation, mission et tests.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "agri_mechanics",
+      "title": "Robot agricole : mécanique et environnement",
+      "summary": "Base à quatre roues, caméra, LiDAR, rangées de culture, obstacles et interfaces ROS 2.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "agri_vision",
+      "title": "Vision IA : mauvaises herbes et santé des plantes",
+      "summary": "Pipeline image, segmentation, seuils, persistance, configuration YAML et limites du proxy.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "agri_math",
+      "title": "Mathématiques du suivi de rangée",
+      "summary": "Cinématique différentielle, erreur latérale, erreur d’orientation et commande proportionnelle.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "fire_mechanics",
+      "title": "Robot pompier : châssis chenillé et zone chaude",
+      "summary": "Base chenillée, capteurs thermiques/LiDAR, bâtiment chaud, débris et arrêt d’urgence.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "track_math",
+      "title": "Cinématique des chenilles et glissement",
+      "summary": "Vitesses gauche/droite, rayon équivalent, ratio de glissement, virage et sol accidenté.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "mission_safety",
+      "title": "Perception, mission et sécurité",
+      "summary": "Fusion thermique, détection d’anomalies, machine à états, sécurité et retour contrôlé.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "validation",
+      "title": "Validation et tests ROS 2/Gazebo",
+      "summary": "Pytest, validation XML/Python, tests topics, scénarios d’obstacles et métriques.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "roadmap",
+      "title": "Conclusion et feuille de route",
+      "summary": "Ce qui est démontré, ce qui reste à intégrer et comment passer vers des contrôleurs réalistes.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

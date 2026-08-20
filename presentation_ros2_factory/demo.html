@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Démonstration locale et prochaines étapes</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;padding-top:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:94px 475px 143px}
+.header{grid-column:1/7;border-bottom:2px solid #1A1A1A;padding:22px 34px;display:flex;align-items:center;justify-content:space-between}.header h1{font:900 40px Arial Narrow,Arial,sans-serif;margin:0}.header span{color:#FF5A1F;font-weight:bold;letter-spacing:2px;font-size:15px}
+.runbook{grid-column:1/5;border-right:2px solid #1A1A1A;padding:20px 20px 0 24px}.runbook h2,.roadmap h2{font:900 24px Arial Narrow,Arial,sans-serif;color:#FF5A1F;margin:0 0 12px}.intro{font-size:17px;line-height:1.45;color:#2D3748;margin:0 0 12px}.cmd{border-top:2px solid #1A1A1A;border-bottom:2px solid #1A1A1A;padding:10px 0 10px;font-size:15px;line-height:1.55;color:#1A1A1A}.cmd strong{color:#FF5A1F}.check{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #1A1A1A;margin-top:14px}.checkline{min-height:50px;padding:6px 10px 0 0;border-top:2px solid #1A1A1A;font-size:15px;line-height:1.4;color:#2D3748}.checkline:nth-child(even){border-left:2px solid #1A1A1A;padding-left:10px}.checkline strong{display:block;color:#FF5A1F;font-size:16px}.launch{margin-top:14px;background:#1A1A1A;color:#E8ECEF;border:2px solid #FF5A1F;padding:12px 16px;font-size:15px;line-height:1.5}.launch strong{color:#FF5A1F}
+.roadmap{grid-column:5/7;background:#1A1A1A;color:#E8ECEF;padding:8px 12px 0;position:relative}.roadmap:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,90,31,.14) 19px 21px);pointer-events:none}.roadmap>*{position:relative}.roadmap h2{color:#FF5A1F}.roadmap p{font-size:15px;line-height:1.45;color:#E8ECEF;margin:0 0 10px}.step{border-top:2px solid #FF5A1F;padding:6px 0;font-size:15px;line-height:1.45}.step strong{display:block;color:#FF5A1F;font-size:17px;margin-bottom:4px}.refs{border-top:2px solid #FF5A1F;padding-top:4px;margin-top:4px;font-size:13px;line-height:1.4;color:#E8ECEF}.refs b{color:#FF5A1F}
+.footer{grid-column:1/7;border-top:2px solid #1A1A1A;background:#E8ECEF;padding:16px 24px 0;display:grid;grid-template-columns:2fr 1fr;gap:24px;font-size:15px;line-height:1.5;color:#2D3748}.footer strong{color:#FF5A1F}.footer code{background:#1A1A1A;color:#E8ECEF;padding:7px 10px;border:2px solid #FF5A1F;font-size:14px}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Démonstration locale & prochaines étapes</h1><span>10 / RUNBOOK</span></div>
+<div class="runbook">
+<h2>Ubuntu 22.04 / ROS 2 Humble</h2>
+<p class="intro">Installer Gazebo, Nav2, RViz2 et Xacro, compiler le workspace, puis lancer Gazebo seul ou l’environnement complet.</p>
+<div class="cmd"><strong>INSTALLER</strong><br>sudo apt install ros-humble-desktop ros-humble-gazebo-ros-pkgs<br>ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-xacro</div>
+<div class="check"><div class="checkline"><strong>01 / BUILD</strong>source /opt/ros/humble/setup.bash<br>rosdep install --from-paths src --ignore-src -r -y<br>colcon build --symlink-install</div><div class="checkline"><strong>02 / GAZEBO</strong>ros2 launch dog_factory_bringup factory_sim.launch.py<br>gui:=true navigation:=false</div><div class="checkline"><strong>03 / NAV2</strong>Ajouter navigation:=true<br>AMCL + carte + NavFn + DWB + BT Navigator</div><div class="checkline"><strong>04 / RVIZ2</strong>Fixed Frame: map<br>Afficher Map, TF, LaserScan, Costmaps, Path</div></div>
+<div class="launch"><strong>COMMANDE DE DÉMONSTRATION</strong><br>ros2 launch dog_factory_bringup factory_sim.launch.py gui:=true navigation:=true</div>
+</div>
+<div class="roadmap">
+<h2>FEUILLE DE ROUTE</h2>
+<p>Passer d’une base de simulation documentée à un système quadrupède physiquement cohérent et évalué expérimentalement.</p>
+<div class="step"><strong>01 · Contrôle</strong>ros2_control et contrôleur locomotion quadrupède.</div><div class="step"><strong>02 · Perception</strong>Calibration extrinsèque caméra-LiDAR et détection OpenCV/ML.</div><div class="step"><strong>03 · Navigation</strong>SLAM Toolbox, carte réelle et validation d’obstacles inconnus.</div><div class="step"><strong>04 · RL</strong>PPO entraîné, randomisation domaine et transfert Gazebo.</div>
+<div class="refs"><b>RÉFÉRENCES</b><br>docs.ros.org/en/humble/<br>docs.nav2.org/<br>classic.gazebosim.org/tutorials</div>
+</div>
+<div class="footer"><div><strong>MESSAGE FINAL</strong><br>Une architecture modulaire permet d’isoler les risques : capteurs, navigation, saut et apprentissage sont testés séparément avant intégration.</div><div><code>git clone<br>github.com/1st-adambenjabbar/dog_factory_ros2</code></div></div>
+</div>
+</body>
+</html>

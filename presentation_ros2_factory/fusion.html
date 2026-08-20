@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fusion LiDAR-caméra</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:90px 420px 196px;position:relative;margin-top:-1px}
+.header{grid-column:1/7;border-bottom:2px solid #1A1A1A;padding:22px 34px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font:900 40px Arial Narrow,Arial,sans-serif;margin:0}.header span{color:#FF5A1F;font-weight:bold;font-size:16px}
+.panel{padding:18px 16px;border-right:2px solid #1A1A1A}.panel:last-child{border-right:0}.panel h2{font:900 25px Arial Narrow,Arial,sans-serif;color:#FF5A1F;margin:0 0 14px}.panel p{font-size:17px;line-height:1.55;color:#2D3748;margin:0}.topic{display:block;margin-top:14px;padding:8px 10px;background:#1A1A1A;color:#E8ECEF;border-top:3px solid #FF5A1F;font-size:16px;line-height:1.4}
+.formula{font-size:20px;line-height:1.7;color:#1A1A1A;margin-top:18px}.formula b{color:#FF5A1F}.signal{margin-top:16px;font-size:15px;color:#2D3748;border-top:2px solid #1A1A1A;padding-top:10px}
+.params{grid-column:1/7;border-top:2px solid #1A1A1A;padding:14px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.params h3{grid-column:1/4;font:900 20px Arial Narrow,Arial,sans-serif;margin:0 0 12px}.param{font-size:15px;line-height:1.4;padding-right:12px;color:#2D3748}.param strong{display:block;color:#FF5A1F;font-size:16px}
+/* removed decorative stripe to save height */
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Fusion LiDAR-caméra</h1><span>05 / PERCEPTION ROBUSTE</span></div>
+<div class="panel"><h2>LI DAR</h2><p>La géométrie frontale vient de <b>/scan</b>. Les rayons invalides sont ignorés et la distance minimale est comparée au seuil d’obstacle.</p><span class="topic">Entrée<br>/scan<br>sensor_msgs/LaserScan</span></div>
+<div class="panel"><h2>CAMÉRA</h2><p>Le flux <b>/image_raw</b> fournit un score visuel central. Le score est lissé dans le temps et invalidé si l’image est trop ancienne ou trop faible.</p><span class="topic">Entrée<br>/image_raw<br>sensor_msgs/Image</span></div>
+<div class="panel"><h2>DÉCISION</h2><div class="formula"><b>confiance</b> =<br>LiDAR × poids<br>+ caméra × signal</div><div class="signal">La détection fusionnée est publiée seulement lorsque la confiance dépasse le seuil configuré.</div><span class="topic">Sorties<br>/perception/fused_obstacles<br>/perception/fusion_confidence</span></div>
+<div class="params"><h3>HYPERPARAMÈTRES À RÉGLER</h3><div class="param"><strong>lidar_weight</strong>0.65<br>preuve géométrique</div><div class="param"><strong>camera_weight</strong>0.35<br>preuve visuelle</div><div class="param"><strong>camera_timeout</strong>0.5 s<br>synchronisation</div><div class="param"><strong>camera_score_alpha</strong>0.25<br>lissage temporel</div><div class="param"><strong>image_stride</strong>8 px<br>coût CPU</div><div class="param"><strong>confidence_threshold</strong>0.60<br>robustesse finale</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Évaluation expérimentale</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:92px 468px 140px}
+.header{grid-column:1/7;border-bottom:2px solid #1A1A1A;padding:22px 34px 12px;display:flex;align-items:center;justify-content:space-between}.header h1{font:900 42px Arial Narrow,Arial,sans-serif;margin:0}.header span{color:#FF5A1F;font-weight:bold;letter-spacing:2px;font-size:15px}
+.metrics{grid-column:1/5;border-right:2px solid #1A1A1A;padding:12px 14px 0}.metrics h2,.protocol h2{font:900 24px Arial Narrow,Arial,sans-serif;color:#FF5A1F;margin:0 0 12px}.table{border-top:2px solid #1A1A1A}.row{display:grid;grid-template-columns:1.25fr 1fr 2fr;min-height:56px;border-bottom:2px solid #1A1A1A;align-items:center}.row div{padding:8px 10px;border-right:2px solid #1A1A1A;font-size:16px}.row div:last-child{border-right:0;color:#2D3748}.row.head{background:#1A1A1A;color:#E8ECEF;min-height:40px}.row.head div{font-weight:bold;color:#FF5A1F}.metric{font:900 20px Arial Narrow,Arial,sans-serif}.unit{color:#FF5A1F;font-weight:bold}
+.protocol{grid-column:5/7;background:#1A1A1A;color:#E8ECEF;padding:12px 12px 0;position:relative}.protocol:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,90,31,.14) 19px 21px);pointer-events:none}.protocol>*{position:relative}.protocol h2{color:#FF5A1F}.protocol p{font-size:16px;line-height:1.5;color:#E8ECEF;margin:0 0 10px}.step{border-top:2px solid #FF5A1F;padding:8px 0;font-size:15px;line-height:1.45}.step strong{color:#FF5A1F}.command{grid-column:1/5;background:#1A1A1A;color:#E8ECEF;padding:8px 20px 0;font-size:15px;line-height:1.5;border-top:2px solid #1A1A1A}.command strong{color:#FF5A1F}.files{grid-column:5/7;border-top:2px solid #1A1A1A;padding:8px 18px 0;font-size:15px;line-height:1.6;color:#2D3748}.files strong{color:#FF5A1F}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Évaluation expérimentale</h1><span>09 / GAZEBO → MÉTRIQUES</span></div>
+<div class="metrics"><h2>MESURES PAR ÉPISODE</h2><div class="table"><div class="row head"><div>INDICATEUR</div><div>CHAMP</div><div>INTERPRÉTATION</div></div><div class="row"><div class="metric">Réussite</div><div class="unit">success</div><div>Franchissement valide sans chute</div></div><div class="row"><div class="metric">Garde verticale</div><div class="unit">clearance_m</div><div>Hauteur maximale atteinte au-dessus du départ</div></div><div class="row"><div class="metric">Progression</div><div class="unit">forward_progress_m</div><div>Déplacement avant pendant l’épisode</div></div><div class="row"><div class="metric">Erreur latérale</div><div class="unit">max_lateral_error_m</div><div>Écart maximal par rapport à l’axe</div></div><div class="row"><div class="metric">Énergie</div><div class="unit">energy_proxy</div><div>Norme moyenne des commandes de vitesse</div></div><div class="row"><div class="metric">Sécurité</div><div class="unit">fell</div><div>Indicateur de chute détectée par odométrie</div></div></div></div>
+<div class="protocol"><h2>PROTOCOLE</h2><p>L’évaluateur observe les topics ROS 2 et déclenche le service de saut. Chaque épisode est enregistré avec ses mesures.</p><div class="step"><strong>01</strong> Attendre une odométrie valide sur <code>/odom</code></div><div class="step"><strong>02</strong> Optionnellement appeler <code>/reset_world</code></div><div class="step"><strong>03</strong> Appeler <code>/dog/jump_python</code></div><div class="step"><strong>04</strong> Observer LiDAR, odom, joints et commandes</div><div class="step"><strong>05</strong> Agréger les épisodes et calculer le taux de réussite</div></div>
+<div class="command"><strong>COMMANDE DE CAMPAGNE</strong><br>ros2 run dog_factory_control evaluate_jump_policy<br>--episodes 50 --duration 3.0 --reset-between-episodes<br>--output results/jump_policy_eval</div>
+<div class="files"><strong>ARTIFACTS</strong><br>jump_policy_eval.csv<br>→ mesures détaillées par épisode<br><br>jump_policy_eval.json<br>→ résumé + épisodes complets</div>
+</div>
+</body>
+</html>

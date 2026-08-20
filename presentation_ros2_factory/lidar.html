@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Perception LiDAR</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:92px 1fr 64px}
+.header{grid-column:1/7;border-bottom:2px solid #1A1A1A;padding:22px 34px 0;display:flex;justify-content:space-between;align-items:flex-start}.header h1{font:900 42px/1 Arial Narrow,Arial,sans-serif;margin:0}.header .index{color:#FF5A1F;font-weight:bold;font-size:16px;letter-spacing:2px}
+.visual{grid-column:1/5;border-right:2px solid #1A1A1A;padding:24px 34px 0;position:relative;background:repeating-linear-gradient(135deg,#E8ECEF 0 22px,#e0e5e8 23px 24px)}.visual h2,.topics h2{font:900 23px/1 Arial Narrow,Arial,sans-serif;margin:0 0 16px;color:#FF5A1F}
+.scan{height:240px;border-top:2px solid #1A1A1A;border-bottom:2px solid #1A1A1A;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;gap:12px;padding-top:20px}
+.stage{height:150px;border:2px solid #1A1A1A;background:#E8ECEF;padding:14px 10px;position:relative}.stage:before{content:"";position:absolute;top:20px;right:16px;width:34px;height:34px;border:2px solid #FF5A1F;border-radius:50%}.stage h3{font:900 18px/1 Arial Narrow,Arial,sans-serif;margin:0 0 22px}.stage p{font-size:15px;line-height:1.45;color:#2D3748;margin:0}.stage .ray{color:#FF5A1F;font-size:22px;letter-spacing:-5px;display:block;margin-top:14px}
+.formula{margin-top:18px;font-size:17px;line-height:1.6;color:#2D3748}.formula b{color:#FF5A1F}
+.topics{grid-column:5/7;padding:24px 20px 0;background:#1A1A1A;color:#E8ECEF}.topics h2{color:#FF5A1F}
+.topic{border-top:2px solid #FF5A1F;padding:12px 0 12px}.topic code{color:#FF5A1F;font-size:17px}.topic p{font-size:15px;line-height:1.45;margin:6px 0 0;color:#E8ECEF}
+.footer{grid-column:1/7;border-top:2px solid #1A1A1A;padding:14px 34px 0;display:flex;justify-content:space-between;font-size:15px;color:#2D3748}.footer strong{color:#FF5A1F}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Perception LiDAR</h1><div class="index">04 / RANGE → OBSTACLE</div></div>
+<div class="visual">
+<h2>PIPELINE DE TRAITEMENT</h2>
+<div class="scan">
+<div class="stage"><h3>01 / SCAN</h3><p>LaserScan<br>/scan<br>angles + ranges</p><span class="ray">↗ ↑ ↖</span></div>
+<div class="stage"><h3>02 / FILTRE</h3><p>Rejette NaN<br>limites 0.12–12 m<br>secteur frontal</p><span class="ray">↗ · ↖</span></div>
+<div class="stage"><h3>03 / POINTS</h3><p>Conversion<br>polaire → XY<br>frame lidar</p><span class="ray">· • ·</span></div>
+<div class="stage"><h3>04 / CLUSTERS</h3><p>Distance entre<br>points + taille<br>minimale</p><span class="ray">▰ ▰</span></div>
+</div>
+<div class="formula"><b>Objectif :</b> produire une géométrie exploitable par l’évitement, Nav2 et la fusion capteurs.<br><b>Paramètres :</b> cluster_distance = 0.35 m · min_cluster_points = 3 · front_danger_distance = 1.0 m</div>
+</div>
+<div class="topics"><h2>SORTIES ROS 2</h2><div class="topic"><code>/lidar/obstacles</code><p>PoseArray : centres approximatifs des groupes détectés.</p></div><div class="topic"><code>/lidar/front_obstacle_distance</code><p>Float32 : distance minimale dans le secteur avant.</p></div><div class="topic"><code>/lidar/obstacle_markers</code><p>MarkerArray : visualisation des obstacles dans RViz2.</p></div><div class="topic"><code>/scan → Nav2</code><p>Le scan alimente aussi AMCL et les costmaps.</p></div></div>
+<div class="footer"><span><strong>ROBUSTESSE</strong> filtrer avant de planifier</span><span>ROS 2 Humble · C++ · RViz2</span></div>
+</div>
+</body>
+</html>

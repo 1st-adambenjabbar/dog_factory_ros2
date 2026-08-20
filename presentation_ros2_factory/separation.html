@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Séparation robot usine</title>
+<style>
+*{box-sizing:border-box}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;padding-top:0}
+.header{min-height:104px;border-bottom:2px solid #1A1A1A;padding:28px 42px 8px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font:900 42px Arial Narrow,Arial,sans-serif;margin:0}
+.header .index{color:#FF5A1F;font-weight:bold}
+.columns{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #1A1A1A}
+.column{padding:8px 20px 0 20px;border-right:2px solid #1A1A1A;position:relative}
+.column:last-child{border-right:0}
+.column.robot{background:#F2F4F5}
+.column.factory{background:#DDE3E7}
+.label{font-size:16px;letter-spacing:2px;color:#FF5A1F;font-weight:bold}
+.column h2{font:900 38px Arial Narrow,Arial,sans-serif;margin:8px 0 8px}
+.file{font-size:18px;line-height:1.6;color:#2D3748;border-top:2px solid #1A1A1A;padding-top:6px}
+.file strong{color:#1A1A1A}
+.arrow{font:900 44px Arial Narrow,Arial,sans-serif;color:#FF5A1F;text-align:center;margin-top:6px}
+.bottom{min-height:96px;padding:12px 42px 0;display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.bottom h3{font:900 25px Arial Narrow,Arial,sans-serif;margin:0 0 6px;color:#FF5A1F}
+.bottom p{font-size:18px;line-height:1.5;color:#2D3748;margin:0}
+.code{background:#1A1A1A;color:#E8ECEF;padding:10px 14px;border:2px solid #FF5A1F;font-size:16px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Séparation robot / usine</h1><span class="index">03 / MODULARITÉ</span></div>
+<div class="columns">
+<div class="column robot"><div class="label">PACKAGE ROBOT</div><h2>dog_robot_description</h2><div class="file"><strong>urdf/</strong> dog_robot.urdf.xacro<br><strong>Contenu</strong>: Liens, jambes, articulations, LiDAR 2D, caméra, plugins</div><div class="arrow">ROBOT RÉUTILISABLE</div></div>
+<div class="column factory"><div class="label">PACKAGE ENVIRONNEMENT</div><h2>dog_factory_environment</h2><div class="file"><strong>worlds/</strong> factory.world<br><strong>Contenu</strong>: Sol industriel, rampe, barrières, piliers</div><div class="arrow">SCÈNE REMPLAÇABLE</div></div>
+</div>
+<div class="bottom"><div><h3>Principe d’architecture</h3><p>Le robot peut être placé dans une autre usine sans modifier sa description. L’usine peut recevoir un autre robot sans réécrire ses obstacles et sa physique.</p></div><div class="code">ros2 launch dog_factory_bringup factory_sim.launch.py<br>description_package = dog_robot_description<br>gazebo_package = dog_factory_environment</div></div>
+</div>
+</body>
+</html>

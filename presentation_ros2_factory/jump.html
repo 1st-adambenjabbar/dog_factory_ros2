@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Sauts par-dessus les obstacles</title>
+<style>
+*{box-sizing:border-box}
+.slide-container{width:1280px;min-height:720px;background:#E8ECEF;color:#1A1A1A;font-family:monospace;border:2px solid #1A1A1A;padding-top:0;display:grid;grid-template-rows:94px 250px 230px 60px}
+.header{border-bottom:2px solid #1A1A1A;padding:22px 28px 22px 34px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font:900 40px Arial Narrow,Arial,sans-serif;margin:0}
+.header span{color:#FF5A1F;font-weight:bold}
+.timeline{padding:18px 24px 0 24px;position:relative}
+.timeline:before{content:"";position:absolute;left:104px;right:104px;top:142px;height:4px;background:#FF5A1F}
+.states{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative}
+.state{min-height:120px;border:2px solid #1A1A1A;background:#E8ECEF;padding:8px 8px}
+.state:nth-child(3){background:#1A1A1A;color:#E8ECEF}
+.state h2{font:900 22px Arial Narrow,Arial,sans-serif;color:#FF5A1F;margin:0 0 8px}
+.state p{font-size:16px;line-height:1.45;margin:0;color:#2D3748}
+.state:nth-child(3) p{color:#E8ECEF}
+.dot{width:18px;height:18px;background:#FF5A1F;border:3px solid #1A1A1A;position:relative;margin:10px auto 0}
+.lower{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #1A1A1A}
+.panel{padding:12px 18px;border-right:2px solid #1A1A1A}
+.panel:last-child{border-right:0}
+.panel h2{font:900 24px Arial Narrow,Arial,sans-serif;margin:0 0 8px;color:#FF5A1F}
+.panel p{font-size:17px;line-height:1.5;margin:0;color:#2D3748}
+.code{margin-top:10px;background:#1A1A1A;color:#E8ECEF;padding:8px 12px;border:2px solid #FF5A1F;font-size:16px}
+.footer{border-top:2px solid #1A1A1A;padding:10px 24px;font-size:15px;color:#2D3748;display:flex;justify-content:space-between}
+.tag{color:#FF5A1F;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="slide-container">
+<div class="header"><h1>Sauts par-dessus les obstacles</h1><span>07 / CONTROL</span></div>
+<div class="timeline"><div class="states"><div class="state"><h2>IDLE</h2><p>Repos<br>Surveillance de /lidar/front_obstacle_distance</p><div class="dot"></div></div><div class="state"><h2>CROUCH</h2><p>Abaissement<br>Préparation des articulations</p><div class="dot"></div></div><div class="state"><h2>TAKEOFF</h2><p>Impulsion<br>Extension rapide des jambes</p><div class="dot"></div></div><div class="state"><h2>FLIGHT</h2><p>Phase aérienne<br>Maintien de la posture</p><div class="dot"></div></div><div class="state"><h2>LAND</h2><p>Réception<br>Stabilisation et retour repos</p><div class="dot"></div></div></div></div>
+<div class="lower"><div class="panel"><h2>Déclenchement</h2><p>Commande manuelle par service ROS 2, ou déclenchement automatique lorsque le LiDAR mesure un obstacle sous le seuil configuré.</p><div class="code">ros2 service call /dog/jump_python std_srvs/srv/Trigger {}</div></div><div class="panel"><h2>Vers le RL</h2><p>La machine à états fournit une politique de secours déterministe. PPO peut ensuite apprendre des actions articulaires continues avec récompenses de réussite, stabilité et énergie.</p><div class="code">config/rl_jump.yaml · curriculum 0.15 → 0.60 m</div></div></div>
+<div class="footer"><span><span class="tag">FSM</span> comportement explicable et testable</span><span><span class="tag">RL</span> optimisation progressive dans Gazebo</span></div>
+</div>
+</body>
+</html>

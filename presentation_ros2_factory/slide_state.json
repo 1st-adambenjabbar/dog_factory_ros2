@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "title": "Vision du projet",
+    "created": 1787240904.755,
+    "last_updated": 1787241408.547,
+    "total_slides": 10
+  },
+  "slides": [
+    {
+      "id": "vision",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "architecture",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "separation",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "lidar",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "fusion",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "nav2",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "jump",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "rl",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "evaluation",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "demo",
+      "state": "edited",
+      "pageNum": 10
+    }
+  ],
+  "outline": [
+    {
+      "id": "vision",
+      "title": "Vision du projet",
+      "summary": "Robot-chien autonome simulé dans une usine avec perception, navigation et sauts.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture globale",
+      "summary": "Vue des flux Gazebo, capteurs, perception, Nav2 et contrôleurs.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "separation",
+      "title": "Séparation robot / usine",
+      "summary": "Packages indépendants pour le robot Xacro et l’environnement SDF.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "lidar",
+      "title": "Perception LiDAR",
+      "summary": "Filtrage, segmentation et topics issus du LiDAR 2D.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "fusion",
+      "title": "Fusion LiDAR-caméra",
+      "summary": "Combinaison des preuves géométriques et visuelles avec hyperparamètres.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "nav2",
+      "title": "Navigation Nav2",
+      "summary": "AMCL, carte, NavFn, DWB, costmaps et Behavior Tree Navigator.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "jump",
+      "title": "Sauts par-dessus les obstacles",
+      "summary": "Machine à états Python et transition vers une politique RL.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "rl",
+      "title": "Configuration RL",
+      "summary": "Hyperparamètres PPO, curriculum, récompenses et exploration.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "evaluation",
+      "title": "Évaluation expérimentale",
+      "summary": "Métriques et fichiers produits par l’évaluateur de politique Gazebo.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "demo",
+      "title": "Démonstration locale et prochaines étapes",
+      "summary": "Installation Ubuntu Humble, lancement complet et feuille de route.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

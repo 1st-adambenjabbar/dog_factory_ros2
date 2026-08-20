@@ -486,3 +486,27 @@ Le script évalue la machine à états ou toute politique qui répond au service
 Pour reconstruire le système de zéro, lire `REBUILD_GUIDE_DOG_ROBOT.md`, puis `MATH_SENSOR_NAV2_GUIDE.md` pour les équations de perception, les signaux ROS 2 et la procédure de test Nav2/Gazebo. La présentation récapitulative des deux workspaces est livrée séparément sous forme de slides.
 
 Références officielles : [ROS 2 Humble](https://docs.ros.org/en/humble/) · [MoveIt 2](https://moveit.picknik.ai/humble/doc/concepts/kinematics.html) · [Nav2](https://docs.nav2.org/getting_started/index.html).
+
+## Animation architecturale des quatre workspaces
+
+GitHub peut rendre ce diagramme Mermaid comme une animation conceptuelle de flux :
+
+```mermaid
+sequenceDiagram
+  participant Dog as Robot-chien
+  participant Log as Robot-logistique
+  participant Agri as Robot-agricole
+  participant Fire as Robot-pompier
+  Dog->>Log: cartographie / coordination
+  Log->>Agri: planification logistique
+  Agri->>Fire: signal environnemental
+  Fire-->>Dog: retour sécurité et état mission
+```
+
+Le schéma ne simule pas un réseau réel ; il résume les rôles complémentaires des quatre workspaces.
+
+## Animation des quatre workspaces
+
+![Animation conceptuelle de l’architecture des quatre workspaces](docs/four_workspaces_architecture.gif)
+
+Cette animation est un schéma pédagogique : elle montre la complémentarité entre robot-chien, robot logistique, robot agricole et robot pompier chenillé. Elle ne représente pas une communication ROS 2 réelle entre les projets.
