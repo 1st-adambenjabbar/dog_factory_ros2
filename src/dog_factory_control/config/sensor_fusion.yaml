@@ -1,0 +1,23 @@
+# Paramètres du nœud de fusion LiDAR-caméra.
+sensor_fusion_node:
+  ros__parameters:
+    # Topic image brut publié par le plugin caméra Gazebo.
+    image_topic: /image_raw
+    # Demi-angle du cône LiDAR frontal en radians.
+    front_angle: 0.45
+    # Distance sous laquelle le LiDAR considère un obstacle frontal.
+    obstacle_distance: 2.0
+    # Âge maximal accepté pour une image caméra.
+    camera_timeout: 0.5
+    # Poids de la preuve géométrique LiDAR dans le score final.
+    lidar_weight: 0.65
+    # Poids maximal de la preuve visuelle caméra.
+    camera_weight: 0.35
+    # Luminosité minimale avant de considérer la caméra informative.
+    min_camera_signal: 0.10
+    # Facteur de lissage exponentiel du score visuel.
+    camera_score_alpha: 0.25
+    # Nombre de pixels sautés entre deux échantillons.
+    image_stride: 8
+    # Seuil final de confiance recommandé au planificateur.
+    detection_confidence_threshold: 0.60

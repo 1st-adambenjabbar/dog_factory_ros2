@@ -48,6 +48,7 @@ install(
     dog_factory_control/autonomy_node.py
     dog_factory_control/keyboard_teleop.py
     dog_factory_control/jump_state_machine.py
+    dog_factory_control/evaluate_jump_policy.py
   DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})

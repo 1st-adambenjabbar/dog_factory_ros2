@@ -109,16 +109,17 @@ def generate_launch_description():
             output='screen',
         ),
 
-        # Démarre la fusion C++ entre les données du LiDAR et de la caméra.
+        # Démarre la fusion C++ avec ses hyperparamètres YAML dédiés.
         Node(
             package='dog_factory_control',
             executable='sensor_fusion_node',
-            parameters=[{
-                'image_topic': '/image_raw',
-                'front_angle': 0.45,
-                'obstacle_distance': 2.0,
-                'camera_timeout': 0.5,
-            }],
+            parameters=[
+                PathJoinSubstitution([
+                    FindPackageShare('dog_factory_control'),
+                    'config',
+                    'sensor_fusion.yaml',
+                ]),
+            ],
             output='screen',
         ),
 

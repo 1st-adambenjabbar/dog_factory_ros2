@@ -442,3 +442,41 @@ Le pipeline RL conseillé est : entraînement hors ligne dans des épisodes cour
 Si AMCL ne publie pas `map -> odom`, vérifiez que `/scan`, `/odom` et `/tf` existent, que `use_sim_time` est activé et que la carte est bien installée. Si le planificateur trouve un chemin mais que le robot ne bouge pas, inspectez `/cmd_vel` et le contrôleur bas niveau. Si la carte paraît inversée, vérifiez `origin`, `resolution`, `occupied_thresh` et `free_thresh` dans `factory.yaml`.
 
 Si Nav2 n’est pas trouvé, installez `ros-humble-navigation2` et `ros-humble-nav2-bringup`, puis sourcez de nouveau `/opt/ros/humble/setup.bash` et `install/setup.bash`.
+
+## 28. Réglage de la fusion LiDAR-caméra
+
+Les paramètres du nœud `sensor_fusion_node` sont maintenant regroupés dans `src/dog_factory_control/config/sensor_fusion.yaml`. Le fichier est chargé automatiquement par le launch principal.
+
+| Paramètre | Rôle | Effet d’une augmentation |
+|---|---|---|
+| `front_angle` | Demi-angle du cône LiDAR avant | Prend en compte une zone plus large |
+| `obstacle_distance` | Distance de déclenchement LiDAR | Rend la détection plus précoce |
+| `camera_timeout` | Âge maximal d’une image | Accepte des images plus anciennes mais moins synchronisées |
+| `lidar_weight` | Poids de la preuve géométrique | Rend la fusion plus conservatrice et robuste au mauvais éclairage |
+| `camera_weight` | Poids de la preuve visuelle | Augmente l’influence de la caméra |
+| `min_camera_signal` | Signal minimal de la caméra | Rejette les images trop sombres ou peu informatives |
+| `camera_score_alpha` | Lissage temporel du score caméra | Réagit plus vite mais devient plus sensible au bruit |
+| `image_stride` | Sous-échantillonnage des pixels | Augmente la vitesse CPU au prix de détails visuels |
+| `detection_confidence_threshold` | Seuil de sortie fusionnée | Réduit les faux positifs lorsqu’il est augmenté |
+
+Pour une usine sombre, commencez avec `lidar_weight: 0.75`, `camera_weight: 0.25`, `camera_score_alpha: 0.15` et `detection_confidence_threshold: 0.65`. Pour une scène bien éclairée avec des obstacles visuellement contrastés, testez `lidar_weight: 0.60`, `camera_weight: 0.40` et `camera_score_alpha: 0.30`. Modifiez un seul groupe de paramètres à la fois et comparez le taux de détection, le taux de faux positifs et la latence.
+
+## 29. Évaluation de la politique RL de saut dans Gazebo
+
+Le script `evaluate_jump_policy.py` exécute une campagne d’épisodes ROS 2. Il appelle `/dog/jump_python`, observe `/odom`, `/lidar/front_obstacle_distance`, `/joint_states` et `/cmd_vel`, puis calcule la réussite, la hauteur maximale, la garde au-dessus de l’obstacle, la progression avant, l’erreur latérale, une approximation de l’énergie et les chutes.
+
+Après compilation :
+
+```bash
+ros2 run dog_factory_control evaluate_jump_policy \
+  --episodes 50 \
+  --duration 3.0 \
+  --success-height 0.20 \
+  --max-lateral-error 1.0 \
+  --reset-between-episodes \
+  --output results/jump_policy_eval
+```
+
+Le script produit `results/jump_policy_eval.csv` pour l’analyse tabulaire et `results/jump_policy_eval.json` pour l’archivage du résumé. Une campagne typique doit être répétée avec plusieurs seeds et plusieurs hauteurs d’obstacle. Le résultat principal est le `success_rate`, mais une politique acceptable doit aussi limiter l’énergie, les chutes et l’erreur latérale.
+
+Le script évalue la machine à états ou toute politique qui répond au service `/dog/jump_python`. Pour évaluer une véritable politique RL, remplacez l’appel de service par une publication d’action issue de votre modèle PPO et conservez les mêmes métriques d’épisode.

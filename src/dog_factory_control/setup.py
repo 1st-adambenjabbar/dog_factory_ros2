@@ -19,6 +19,7 @@ setup(
             'autonomy_node = dog_factory_control.autonomy_node:main',
             'keyboard_teleop = dog_factory_control.keyboard_teleop:main',
             'jump_state_machine = dog_factory_control.jump_state_machine:main',
+            'evaluate_jump_policy = dog_factory_control.evaluate_jump_policy:main',
         ],
     },
 )

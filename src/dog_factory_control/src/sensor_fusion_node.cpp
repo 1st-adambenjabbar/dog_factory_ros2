@@ -44,6 +44,24 @@ public:
     // Définit la durée maximale de validité du score caméra.
     declare_parameter<double>("camera_timeout", 0.5);
 
+    // Définit le poids de la preuve géométrique LiDAR.
+    declare_parameter<double>("lidar_weight", 0.65);
+
+    // Définit le poids maximal de la preuve visuelle caméra.
+    declare_parameter<double>("camera_weight", 0.35);
+
+    // Définit le signal minimal pour considérer la caméra informative.
+    declare_parameter<double>("min_camera_signal", 0.10);
+
+    // Définit le facteur de lissage du score image.
+    declare_parameter<double>("camera_score_alpha", 0.25);
+
+    // Définit le pas entre deux pixels échantillonnés.
+    declare_parameter<int>("image_stride", 8);
+
+    // Définit le seuil de confiance exploitable par un planificateur.
+    declare_parameter<double>("detection_confidence_threshold", 0.60);
+
     // Reçoit chaque scan lidar avec une QoS adaptée aux capteurs.
     lidar_subscription_ = create_subscription<sensor_msgs::msg::LaserScan>(
       "/scan", rclcpp::SensorDataQoS(),
@@ -91,9 +109,13 @@ private:
       return;
     }
 
+    // Charge le pas de sous-échantillonnage configuré.
+    const std::size_t image_stride = static_cast<std::size_t>(
+      std::max(1, get_parameter("image_stride").as_int()));
+
     // Parcourt une image sous-échantillonnée pour limiter le coût CPU.
-    for (std::size_t y = min_y; y < max_y; y += 8) {
-      for (std::size_t x = min_x; x < max_x; x += 8) {
+    for (std::size_t y = min_y; y < max_y; y += image_stride) {
+      for (std::size_t x = min_x; x < max_x; x += image_stride) {
         // Calcule l'index du pixel dans le tableau binaire.
         const std::size_t index = y * image->step + x * channels;
 
@@ -108,8 +130,15 @@ private:
       }
     }
 
-    // Stocke la moyenne centrale pour la prochaine fusion.
-    latest_image_score_ = samples == 0 ? 0.0F : static_cast<float>(sum / samples);
+    // Calcule le nouveau score visuel brut.
+    const float raw_score = samples == 0 ? 0.0F : static_cast<float>(sum / samples);
+
+    // Charge le facteur de lissage configuré entre zéro et un.
+    const float alpha = static_cast<float>(std::clamp(
+      get_parameter("camera_score_alpha").as_double(), 0.0, 1.0));
+
+    // Lisse le score pour réduire les variations image par image.
+    latest_image_score_ = alpha * raw_score + (1.0F - alpha) * latest_image_score_;
 
     // Stocke l'horodatage de la dernière image disponible.
     latest_image_stamp_ = rclcpp::Time(image->header.stamp);
@@ -122,6 +151,10 @@ private:
     const double front_angle = get_parameter("front_angle").as_double();
     const double obstacle_distance = get_parameter("obstacle_distance").as_double();
     const double camera_timeout = get_parameter("camera_timeout").as_double();
+    const double lidar_weight = get_parameter("lidar_weight").as_double();
+    const double camera_weight = get_parameter("camera_weight").as_double();
+    const double min_camera_signal = get_parameter("min_camera_signal").as_double();
+    const double confidence_threshold = get_parameter("detection_confidence_threshold").as_double();
 
     // Initialise la distance sans obstacle détecté.
     double closest_distance = std::numeric_limits<double>::infinity();
@@ -153,18 +186,24 @@ private:
     // Le LiDAR apporte une confiance forte dès qu'un obstacle géométrique est proche.
     const bool lidar_obstacle = std::isfinite(closest_distance) && closest_distance < obstacle_distance;
 
-    // Le score visuel augmente la confiance si une image récente est disponible.
-    const float camera_weight = camera_available ? latest_image_score_ : 0.0F;
+    // Le score visuel est ignoré si l'image est trop ancienne ou trop faible.
+    const double visual_signal = camera_available && latest_image_score_ >= min_camera_signal
+      ? latest_image_score_ : 0.0F;
 
-    // Combine une preuve géométrique et une preuve visuelle sans remplacer le LiDAR.
-    const float confidence = lidar_obstacle ? std::min(1.0F, 0.65F + 0.35F * camera_weight) : 0.35F * camera_weight;
+    // Combine les deux preuves avec des poids configurables.
+    const float confidence = static_cast<float>(std::clamp(
+      (lidar_obstacle ? lidar_weight : 0.0) + camera_weight * visual_signal,
+      0.0, 1.0));
+
+    // Définit la décision de détection fusionnée.
+    const bool fused_obstacle = lidar_obstacle && confidence >= confidence_threshold;
 
     // Publie un PoseArray contenant l'obstacle frontal lorsqu'il existe.
     geometry_msgs::msg::PoseArray obstacles;
     obstacles.header = scan->header;
 
     // Ajoute le centre approximatif de l'obstacle dans le frame du lidar.
-    if (lidar_obstacle) {
+    if (fused_obstacle) {
       geometry_msgs::msg::Pose pose;
       pose.position.x = closest_distance;
       pose.position.y = 0.0;
