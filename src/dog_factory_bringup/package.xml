@@ -1,1 +1,30 @@
-<?xml version="1.0"?><package format="3"><name>dog_factory_bringup</name><version>0.1.0</version><description>Integrated factory simulation launch.</description><maintainer email="dev@example.com">Manus AI</maintainer><license>Apache-2.0</license><buildtool_depend>ament_cmake</buildtool_depend><exec_depend>launch</exec_depend><exec_depend>launch_ros</exec_depend><exec_depend>gazebo_ros</exec_depend><exec_depend>dog_factory_description</exec_depend><exec_depend>dog_factory_gazebo</exec_depend><exec_depend>dog_factory_control</exec_depend><export/></package>
+<?xml version="1.0"?>
+<!-- Package qui lance le robot et l'environnement dans une simulation complète. -->
+<package format="3">
+  <!-- Nom utilisé par ros2 launch. -->
+  <name>dog_factory_bringup</name>
+  <!-- Version du bringup intégré. -->
+  <version>0.3.0</version>
+  <!-- Description des composants lancés ensemble. -->
+  <description>Integrated bringup for separated dog robot, factory environment and sensor perception.</description>
+  <!-- Mainteneur du workspace. -->
+  <maintainer email="dev@example.com">Manus AI</maintainer>
+  <!-- Licence du code. -->
+  <license>Apache-2.0</license>
+  <!-- Construction CMake du package. -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- API de lancement ROS 2. -->
+  <exec_depend>launch</exec_depend>
+  <!-- Actions Node et FindPackageShare. -->
+  <exec_depend>launch_ros</exec_depend>
+  <!-- Intégration Gazebo Classic. -->
+  <exec_depend>gazebo_ros</exec_depend>
+  <!-- Description robot indépendante. -->
+  <exec_depend>dog_robot_description</exec_depend>
+  <!-- Environnement usine indépendant. -->
+  <exec_depend>dog_factory_environment</exec_depend>
+  <!-- Package qui compile les contrôleurs et perceptions. -->
+  <exec_depend>dog_factory_control</exec_depend>
+  <!-- Métadonnées ament. -->
+  <export/>
+</package>

@@ -24,8 +24,31 @@ ament_target_dependencies(
   visualization_msgs
 )
 
-# Installe les exécutables dans le dossier lib du package.
-install(TARGETS jump_controller_cpp lidar_obstacle_detector DESTINATION lib/${PROJECT_NAME})
-install(PROGRAMS dog_factory_control/autonomy_node.py dog_factory_control/keyboard_teleop.py DESTINATION lib/${PROJECT_NAME})
+# Compile le nœud C++ qui fusionne le LiDAR et le flux caméra.
+add_executable(sensor_fusion_node src/sensor_fusion_node.cpp)
+ament_target_dependencies(
+  sensor_fusion_node
+  rclcpp
+  sensor_msgs
+  geometry_msgs
+  std_msgs
+)
+
+# Installe les trois exécutables C++ du package.
+install(TARGETS jump_controller_cpp lidar_obstacle_detector sensor_fusion_node DESTINATION lib/${PROJECT_NAME})
+
+# Active l'intégration pytest lorsqu'elle est disponible dans ROS 2.
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(lidar_perception_pytest tests/test_lidar_obstacle_detector.py)
+endif()
+# Installe les nœuds Python exécutables par ros2 run.
+install(
+  PROGRAMS
+    dog_factory_control/autonomy_node.py
+    dog_factory_control/keyboard_teleop.py
+    dog_factory_control/jump_state_machine.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 ament_package()

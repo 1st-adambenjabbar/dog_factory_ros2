@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- Package indépendant qui contient uniquement la description du robot-chien. -->
+<package format="3">
+  <!-- Nom du package utilisé par xacro et robot_state_publisher. -->
+  <name>dog_robot_description</name>
+  <!-- Version de la description robot. -->
+  <version>0.2.0</version>
+  <!-- Rôle fonctionnel de ce package. -->
+  <description>Separated and documented URDF/Xacro description of the quadruped factory dog.</description>
+  <!-- Mainteneur du workspace. -->
+  <maintainer email="dev@example.com">Manus AI</maintainer>
+  <!-- Licence du contenu fourni. -->
+  <license>Apache-2.0</license>
+  <!-- Outil de construction de l'installation. -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- Exécutable qui traite le Xacro. -->
+  <exec_depend>xacro</exec_depend>
+  <!-- Nœud qui publie les transformations du robot. -->
+  <exec_depend>robot_state_publisher</exec_depend>
+  <!-- Outil optionnel de visualisation des joints. -->
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <!-- Métadonnées ROS 2. -->
+  <export/>
+</package>

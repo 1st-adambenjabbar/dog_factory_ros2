@@ -33,6 +33,10 @@
   <depend>visualization_msgs</depend>
   <!-- Types temporels utilisés par les messages ROS 2. -->
   <depend>builtin_interfaces</depend>
+  <!-- Extension colcon qui exécute les tests pytest. -->
+  <test_depend>ament_cmake_pytest</test_depend>
+  <!-- Bibliothèque Python utilisée par les tests. -->
+  <test_depend>python3-pytest</test_depend>
   <!-- Indique à colcon d'utiliser la construction CMake. -->
   <export>
     <build_type>ament_cmake</build_type>

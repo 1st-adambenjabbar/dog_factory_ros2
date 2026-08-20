@@ -295,3 +295,52 @@ ros2 topic hz /lidar/obstacles
 ```
 
 Le nœud est volontairement sans OpenCV, car les données d’entrée sont des distances angulaires et non des images. Pour une version plus avancée, il serait possible d’ajouter une caméra RGB, OpenCV et une fusion caméra-LiDAR ; le détecteur actuel constitue la branche de perception géométrique robuste et légère pour l’évitement.
+
+## 20. Architecture séparée robot / usine
+
+La description est maintenant séparée en deux responsabilités. Le package `dog_robot_description` contient le robot-chien, ses liens, ses articulations, son lidar et sa caméra. Le package `dog_factory_environment` contient uniquement le monde SDF, le sol, la rampe, la barrière, les caisses et les piliers.
+
+Cette séparation permet de remplacer l’usine sans modifier le robot, ou de réutiliser le robot dans un autre monde. Le launch principal utilise désormais `dog_robot_description` et `dog_factory_environment`.
+
+## 21. Machine à états de saut Python
+
+Le fichier `dog_factory_control/dog_factory_control/jump_state_machine.py` fournit une alternative Python au contrôleur C++ historique. Ses états sont `IDLE`, `CROUCH`, `TAKEOFF`, `FLIGHT` et `LAND`. Chaque transition publie une posture articulaire sur `/dog/joint_trajectory`.
+
+Pour demander un saut :
+
+```bash
+ros2 service call /dog/jump_python std_srvs/srv/Trigger {}
+```
+
+Pour autoriser un déclenchement automatique devant un obstacle :
+
+```bash
+ros2 param set /jump_state_machine auto_jump true
+```
+
+Le saut automatique utilise `/lidar/front_obstacle_distance`. Pour une exécution physique complète, il faut encore connecter le topic de trajectoire à un contrôleur d’articulations Gazebo ou `ros2_control`.
+
+## 22. Fusion LiDAR + caméra
+
+Le fichier `sensor_fusion_node.cpp` reçoit `/scan` et `/image_raw`. Le LiDAR fournit la distance géométrique frontale ; la caméra fournit un score visuel léger calculé sur la luminosité moyenne d’une fenêtre centrale. La fusion ne remplace pas la géométrie LiDAR : elle ajoute un score de confiance lorsque l’image est récente.
+
+Les sorties sont `/perception/fused_obstacles` de type `geometry_msgs/msg/PoseArray` et `/perception/fusion_confidence` de type `std_msgs/msg/Float32`. Le nœud est lancé automatiquement par `factory_sim.launch.py`.
+
+Cette implémentation évite une dépendance obligatoire à OpenCV et `cv_bridge`. Pour une perception industrielle avancée, remplacez le score de luminosité par une détection OpenCV ou un modèle neuronal, puis ajoutez une calibration extrinsèque caméra-LiDAR et une transformation TF.
+
+## 23. Tests pytest
+
+Les tests sont dans `dog_factory_control/tests/test_lidar_obstacle_detector.py`. Ils couvrent les scans vides, les obstacles proches, deux obstacles séparés, le rejet du bruit isolé, la distance frontale dangereuse et l’absence d’obstacle frontal.
+
+Après compilation ROS 2 :
+
+```bash
+colcon test --packages-select dog_factory_control
+colcon test-result --verbose
+```
+
+Les tests utilisent des nuages de points synthétiques et reproduisent l’algorithme de segmentation du C++. Ils permettent de valider les cas géométriques indépendamment de Gazebo.
+
+## 24. Commentaires XML et déclaratifs
+
+Les nouveaux fichiers `dog_robot_description/package.xml`, `dog_factory_environment/package.xml`, les CMakeLists, le monde SDF et le launch contiennent désormais des commentaires explicatifs par section. Le cœur Xacro est conservé séparément afin de préserver une description robot fonctionnelle et réutilisable ; `dog_robot.urdf.xacro` documente son rôle d’interface.

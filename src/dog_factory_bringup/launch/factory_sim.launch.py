@@ -21,10 +21,10 @@ def generate_launch_description():
     """Construit le lancement complet de la simulation d'usine."""
 
     # Localise le package contenant le Xacro du robot.
-    description_package = FindPackageShare('dog_factory_description')
+    description_package = FindPackageShare('dog_robot_description')
 
     # Localise le package contenant le monde Gazebo.
-    gazebo_package = FindPackageShare('dog_factory_gazebo')
+    gazebo_package = FindPackageShare('dog_factory_environment')
 
     # Localise le package contenant les paramètres de bringup.
     bringup_package = FindPackageShare('dog_factory_bringup')
@@ -33,7 +33,7 @@ def generate_launch_description():
     world_file = PathJoinSubstitution([gazebo_package, 'worlds', 'factory.world'])
 
     # Construit le chemin vers le modèle Xacro du robot.
-    xacro_file = PathJoinSubstitution([description_package, 'urdf', 'dog.urdf.xacro'])
+    xacro_file = PathJoinSubstitution([description_package, 'urdf', 'dog_robot_core.xacro'])
 
     # Retourne la liste des actions exécutées par ros2 launch.
     return LaunchDescription([
@@ -103,7 +103,31 @@ def generate_launch_description():
             output='screen',
         ),
 
-        # Démarre le nœud C++ qui fournit le service /dog/jump.
+        # Démarre la fusion C++ entre les données du LiDAR et de la caméra.
+        Node(
+            package='dog_factory_control',
+            executable='sensor_fusion_node',
+            parameters=[{
+                'image_topic': '/image_raw',
+                'front_angle': 0.45,
+                'obstacle_distance': 2.0,
+                'camera_timeout': 0.5,
+            }],
+            output='screen',
+        ),
+
+        # Démarre la machine à états Python pour les sauts par-dessus obstacles.
+        Node(
+            package='dog_factory_control',
+            executable='jump_state_machine',
+            parameters=[{
+                'auto_jump': False,
+                'jump_trigger_distance': 0.75,
+            }],
+            output='screen',
+        ),
+
+        # Démarre le contrôleur C++ historique de saut pour compatibilité.
         Node(
             package='dog_factory_control',
             executable='jump_controller_cpp',

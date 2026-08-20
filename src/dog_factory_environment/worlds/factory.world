@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!-- Monde Gazebo indépendant du modèle robot. -->
+<sdf version="1.6">
+  <!-- Nom global de la scène industrielle. -->
+  <world name="big_factory">
+    <!-- Sol et lumière standards de Gazebo. -->
+    <include><uri>model://ground_plane</uri></include>
+    <include><uri>model://sun</uri></include>
+
+    <!-- Paramètres physiques stables pour la simulation. -->
+    <physics type="ode">
+      <!-- Petit pas de calcul pour améliorer les contacts et le saut. -->
+      <max_step_size>0.001</max_step_size>
+      <!-- Fréquence de mise à jour temps réel. -->
+      <real_time_update_rate>1000</real_time_update_rate>
+      <!-- Gravité terrestre. -->
+      <gravity>0 0 -9.81</gravity>
+    </physics>
+
+    <!-- Éclairage et arrière-plan de l'usine. -->
+    <scene>
+      <ambient>0.16 0.16 0.16 1</ambient>
+      <background>0.03 0.04 0.06 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Dalle industrielle principale de 40 mètres par 24 mètres. -->
+    <model name="factory_floor">
+      <static>true</static>
+      <link name="floor">
+        <collision><geometry><box><size>40 24 0.2</size></box></geometry></collision>
+        <visual>
+          <geometry><box><size>40 24 0.2</size></box></geometry>
+          <material><ambient>0.22 0.25 0.28 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Rampe orange utilisée pour tester le saut. -->
+    <model name="jump_ramp">
+      <static>true</static>
+      <pose>3 0 0.25 0 0.12 0</pose>
+      <link name="ramp">
+        <collision><geometry><box><size>2.2 2.0 0.5</size></box></geometry></collision>
+        <visual>
+          <geometry><box><size>2.2 2.0 0.5</size></box></geometry>
+          <material><ambient>0.9 0.25 0.04 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Barrière jaune détectable par le lidar. -->
+    <model name="safety_barrier">
+      <static>true</static>
+      <pose>7 0 0.45 0 0 0</pose>
+      <link name="barrier">
+        <collision><geometry><box><size>0.35 3.2 0.9</size></box></geometry></collision>
+        <visual>
+          <geometry><box><size>0.35 3.2 0.9</size></box></geometry>
+          <material><ambient>0.95 0.65 0.05 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Rangée de caisses brunes simulant un stockage industriel. -->
+    <model name="crate_row">
+      <static>true</static>
+      <pose>11 0 0.75 0 0 0</pose>
+      <link name="crate">
+        <collision><geometry><box><size>1.4 4.0 1.5</size></box></geometry></collision>
+        <visual>
+          <geometry><box><size>1.4 4.0 1.5</size></box></geometry>
+          <material><ambient>0.35 0.18 0.06 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Pilier industriel côté gauche. -->
+    <model name="pillar_a">
+      <static>true</static>
+      <pose>0 5 2 0 0 0</pose>
+      <link name="p">
+        <collision><geometry><cylinder><radius>0.35</radius><length>4</length></cylinder></geometry></collision>
+        <visual><geometry><cylinder><radius>0.35</radius><length>4</length></cylinder></geometry></visual>
+      </link>
+    </model>
+
+    <!-- Pilier industriel côté droit. -->
+    <model name="pillar_b">
+      <static>true</static>
+      <pose>0 -5 2 0 0 0</pose>
+      <link name="p">
+        <collision><geometry><cylinder><radius>0.35</radius><length>4</length></cylinder></geometry></collision>
+        <visual><geometry><cylinder><radius>0.35</radius><length>4</length></cylinder></geometry></visual>
+      </link>
+    </model>
+  </world>
+</sdf>
